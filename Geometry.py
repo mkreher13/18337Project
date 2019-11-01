@@ -1,7 +1,6 @@
 #18.337 Project Miriam Kreher
 #Class to create & operate on geometry and rays
 
-from Plotter import *
 from Flux import *
 import numpy as np
 import random
@@ -13,7 +12,7 @@ class Geometry():
 
 ######################################################
 
-	def surface(self, Pitch, rad):
+	def surface(self, Pitch):
 		
 		HalfPitch = Pitch/2.
 		self.xRight = HalfPitch
@@ -21,13 +20,9 @@ class Geometry():
 		self.yTop = HalfPitch
 		self.yBottom = -HalfPitch
 
-		# self.P = Plotter() #PlotterProblems
-		# self.P.pincell(Pitch, rad) #PlotterProblems
-
 ######################################################	
 
-	def ray_tracing(self, F, P, max_length, deadzone, d_tot, iteration, 
-		nCells, nGrps, rad):
+	def ray_tracing(self, F, max_length, deadzone, d_tot, nGrps, rad):
 
 		#Sample new startig points & angle
 		StartX = random.random()*1.26-0.63
@@ -39,10 +34,10 @@ class Geometry():
 		d_center_start = np.sqrt(StartX**2+StartY**2)
 		if d_center_start <= rad[0]:
 			cell=1
-			F.newray(nCells, nGrps, cell)
+			F.newray(nGrps, cell)
 		else:
 			cell=0
-			F.newray(nCells, nGrps, cell)
+			F.newray(nGrps, cell)
 
 		#Build segments
 		while d_tot < max_length:
@@ -130,8 +125,6 @@ class Geometry():
 					self.s_tot = self.s_tot+s
 					self.vol[cell] = self.vol[cell]+s
 
-			#Plot rays
-			# if iteration == 1:
-				# self.P.rays(StartX, StartY, EndX, EndY)
+
 			StartX = EndX
 			StartY = EndY

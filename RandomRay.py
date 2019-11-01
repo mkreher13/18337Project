@@ -1,5 +1,4 @@
-#18.337 Project Miriam Kreher
-#MOC
+#18.337 Project RandomRay Miriam Kreher
 
 #Imports
 from Geometry import *
@@ -7,7 +6,7 @@ from time import time
 startTime = time()
 
 #Variables
-rays = 200
+rays = 20 #200
 ray_length = 75 #[cm]
 deadzone = 25 #[cm]
 pitch = 1.26
@@ -23,7 +22,7 @@ iteration = 0
 #Initial functions
 #Plot the pincell without rays
 G = Geometry()
-G.surface(pitch, rad)
+G.surface(pitch)
 #Initialize cross sections, source, etc
 F = Flux(fuel_rad, pitch, nCells, nGrps, NEWk, rad)
 
@@ -35,9 +34,6 @@ while abs(k-NEWk)>1e-5 or m>1e-5:
 	random.seed(1)
 	k = NEWk
 	F.phibar = np.zeros([nCells,nGrps])
-	if iteration == 1:
-		print("Plotting rays... this may take a minute...")
-		print("To avoid this step: comment out line 122,123 in Geometry.py")
 	G.vol = np.zeros(nCells)
 	G.s_tot = 0
 
@@ -46,11 +42,7 @@ while abs(k-NEWk)>1e-5 or m>1e-5:
 		#Count distance in moderator, fuel, total distance
 		d_tot = 0
 		#Trace rays
-		G.ray_tracing(F, pitch, ray_length, deadzone, d_tot, iteration, 
-			nCells, nGrps, rad)
-	#if iteration == 1: #PlotterProblems
-		#Plot rays only once, at the first iteration
-		# G.P.end() #PlotterProblems 
+		G.ray_tracing(F, ray_length, deadzone, d_tot, nGrps, rad)
 
 	#Add one-time terms to phibar
 	for cell in range(0,nCells):
@@ -70,10 +62,6 @@ while abs(k-NEWk)>1e-5 or m>1e-5:
 	scatsrc = np.zeros([nCells,nGrps])
 	for cell in range(0,nCells):
 		for g in range(0,nGrps):
-			# print F.scat[:,g+nGrps*cell]
-			# print F.phibar[cell,:]
-			# print F.scat[:,g+nGrps*cell]*F.phibar[cell,:]
-			# print sum(F.scat[:,g+nGrps*cell]*F.phibar[cell,:])
 			scatsrc[cell,g] = sum(F.scat[:,g+nGrps*cell]*F.phibar[cell,:])
 	for cell in range(0,nCells):
 		for g in range(0,nGrps):
@@ -86,11 +74,11 @@ while abs(k-NEWk)>1e-5 or m>1e-5:
 	F.oldphi = copy.copy(F.phibar)
 
 	#Output convergence criteria
-	print('Source:') 
-	print(F.q)
-	print('k: %f' % (NEWk))
+	# print('Source:') 
+	# print(F.q)
+	# print('k: %f' % (NEWk))
 
-print('Number of iterations is %i' % (iteration))
+# print('Number of iterations is %i' % (iteration))
 metric = (time()-startTime)/(F.seg_counter*nGrps)
 print('Execution metric [time/seg*nGrps] is %.8f microseconds' %(metric*1000000))
 

@@ -70,7 +70,7 @@ class Flux():
 
 ######################################################
 
-	def newray(self, nCells, nGrps, cell):
+	def newray(self, nGrps, cell):
 		self.deltapsi = np.zeros(nGrps)
 		self.psi = copy.copy(self.q[cell])				
 
