@@ -1,0 +1,1 @@
+Execution metric [time/seg*nGrps] is 25.71074213 microseconds
