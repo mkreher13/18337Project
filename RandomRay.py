@@ -6,12 +6,12 @@ from time import time
 startTime = time()
 
 #Variables
-rays = 20 #200
+rays = 200 #200
 ray_length = 75 #[cm]
 deadzone = 25 #[cm]
 pitch = 1.26
 fuel_rad = 0.4
-rad = [0.4, 0.3, 0.2, 0.1]
+rad = np.array([0.4, 0.3, 0.2, 0.1])
 nCells = len(rad)+1
 nGrps = 2
 NEWk = 1.0
@@ -20,9 +20,7 @@ m = 2.0
 iteration = 0
 
 #Initial functions
-#Plot the pincell without rays
-G = Geometry()
-G.surface(pitch)
+G = Geometry(pitch)
 #Initialize cross sections, source, etc
 F = Flux(fuel_rad, pitch, nCells, nGrps, NEWk, rad)
 
@@ -59,14 +57,17 @@ while abs(k-NEWk)>1e-5 or m>1e-5:
 
 	#Update source q
 	nuf_rate = F.phibar[:,:]*F.nufiss[:,:]
-	scatsrc = np.zeros([nCells,nGrps])
+	tmp = 1./4./np.pi
+	# scatsrc = np.zeros([nCells,nGrps])
 	for cell in range(0,nCells):
 		for g in range(0,nGrps):
-			scatsrc[cell,g] = sum(F.scat[:,g+nGrps*cell]*F.phibar[cell,:])
-	for cell in range(0,nCells):
-		for g in range(0,nGrps):
-			F.q[cell,g] = 1./4./np.pi/F.tot[cell,g]*(F.chi[cell,g]/NEWk*sum(nuf_rate[cell,:]
-				)+scatsrc[cell,g])
+			# scatsrc[cell,g] = sum(F.scat[:,g+nGrps*cell]*F.phibar[cell,:])
+			F.q[cell,g] = tmp/F.tot[cell,g]*(F.chi[cell,g]/NEWk*sum(nuf_rate[cell,:]
+				)+sum(F.scat[:,g+nGrps*cell]*F.phibar[cell,:]))
+	# for cell in range(0,nCells):
+	# 	for g in range(0,nGrps):
+	# 		F.q[cell,g] = tmp/F.tot[cell,g]*(F.chi[cell,g]/NEWk*sum(nuf_rate[cell,:]
+	# 			)+scatsrc[cell,g])
 
 	#Calculate convergence criteria
 	m = np.ndarray.max(F.q[:,:]-F.oldq[:,:])

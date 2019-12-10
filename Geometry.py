@@ -7,18 +7,15 @@ import random
 
 class Geometry():
 
-	def __init__(self):
-		self
-
-######################################################
-
-	def surface(self, Pitch):
+	def __init__(self, Pitch):
 		
+		#defining surfaces 
 		HalfPitch = Pitch/2.
 		self.xRight = HalfPitch
 		self.xLeft = -HalfPitch
 		self.yTop = HalfPitch
 		self.yBottom = -HalfPitch
+	
 
 ######################################################	
 
@@ -91,18 +88,10 @@ class Geometry():
 				#Hits a right or left boundary
 				theta = -theta+np.pi
 				cell=0
-				if d_tot > deadzone:
-					F.contribute(cell,s,nGrps)
-					self.vol[cell] = self.vol[cell]+s
-					self.s_tot = self.s_tot+s
 			elif d == d3 or d == d4:
 				#Hits a top or bottom boundary
 				theta = -theta
 				cell=0
-				if d_tot > deadzone:
-					F.contribute(cell,s,nGrps)
-					self.vol[cell] = self.vol[cell]+s
-					self.s_tot = self.s_tot+s
 			else:
 				#Distance from the center for the start point of the ray and
 				#distance from the center for the end point of the ray
@@ -120,10 +109,11 @@ class Geometry():
 							cell = i
 						elif round(d_center_start,1) > round(d_center_end,1):
 							cell = i+1
-				if d_tot > deadzone:
-					F.contribute(cell,s,nGrps)
-					self.s_tot = self.s_tot+s
-					self.vol[cell] = self.vol[cell]+s
+
+			if d_tot > deadzone:
+				F.contribute(cell,s,nGrps)
+				self.s_tot = self.s_tot+s
+				self.vol[cell] = self.vol[cell]+s
 
 
 			StartX = EndX
