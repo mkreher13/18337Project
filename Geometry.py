@@ -7,7 +7,14 @@ import random
 
 class Geometry():
 
-	def __init__(self, Pitch):
+	def __init__(self, Pitch, rays):
+
+		random.seed(1)
+
+		self.RandNums = np.zeros([rays,4])
+		for i in range(0,rays):
+			for j in range(0,4):
+				self.RandNums[i,j] = random.random()
 		
 		#defining surfaces 
 		HalfPitch = Pitch/2.
@@ -19,13 +26,13 @@ class Geometry():
 
 ######################################################	
 
-	def ray_tracing(self, F, max_length, deadzone, d_tot, nGrps, rad):
+	def ray_tracing(self, F, max_length, deadzone, d_tot, nGrps, rad, ray):
 
 		#Sample new starting points & angle
-		StartX = random.random()*1.26-0.63
-		StartY = random.random()*1.26-0.63
-		theta = random.random()*2*np.pi
-		u = random.random()
+		StartX = self.RandNums[ray,0]*1.26-0.63 #random.random()*1.26-0.63
+		StartY = self.RandNums[ray,1]*1.26-0.63 #random.random()*1.26-0.63
+		theta = self.RandNums[ray,2]*2*np.pi #random.random()*2*np.pi
+		u = self.RandNums[ray,3] #random.random()
 
 		#Reset deltapsi and psi
 		d_center_start = np.sqrt(StartX**2+StartY**2)
@@ -89,17 +96,17 @@ class Geometry():
 				theta = -theta+np.pi
 				cell=0
 				if d_tot > deadzone:
-					F.contribute(cell,s,nGrps)
-					self.vol[cell] = self.vol[cell]+s
-					self.s_tot = self.s_tot+s
+					F.contribute(cell,s,nGrps,ray)
+					self.vol_storage[ray,cell] = self.vol_storage[ray,cell]+s
+					# self.vol[cell] = self.vol[cell]+s
 			elif d == d3 or d == d4:
 				#Hits a top or bottom boundary
 				theta = -theta
 				cell=0
 				if d_tot > deadzone:
-					F.contribute(cell,s,nGrps)
-					self.vol[cell] = self.vol[cell]+s
-					self.s_tot = self.s_tot+s
+					F.contribute(cell,s,nGrps,ray)
+					self.vol_storage[ray,cell] = self.vol_storage[ray,cell]+s
+					# self.vol[cell] = self.vol[cell]+s
 			else:
 				#Distance from the center for the start point of the ray and
 				#distance from the center for the end point of the ray
@@ -119,16 +126,10 @@ class Geometry():
 							cell = i
 						elif a > b:
 							cell = i+1
-						# if round(d_center_start,1) == round(d_center_end,1):
-						# 	cell = i+1
-						# elif round(d_center_start,1) < round(d_center_end,1):
-						# 	cell = i
-						# elif round(d_center_start,1) > round(d_center_end,1):
-						# 	cell = i+1
 				if d_tot > deadzone:
-					F.contribute(cell,s,nGrps)
-					self.s_tot = self.s_tot+s
-					self.vol[cell] = self.vol[cell]+s
+					F.contribute(cell,s,nGrps,ray)
+					self.vol_storage[ray,cell] = self.vol_storage[ray,cell]+s
+					# self.vol[cell] = self.vol[cell]+s
 
 
 			StartX = EndX
