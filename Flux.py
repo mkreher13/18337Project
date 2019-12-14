@@ -65,7 +65,7 @@ class Flux():
 
 	def newray(self, nGrps, cell):
 		self.deltapsi = np.zeros(nGrps)
-		self.psi = copy.copy(self.q[cell])				
+		self.psi = copy.copy(self.q[cell])
 
 ######################################################
 
@@ -73,14 +73,8 @@ class Flux():
 
 		self.seg_counter = self.seg_counter+1
 
-		self.deltapsi[:] = (self.psi[:]-self.q[cell,:])*(
-				1-np.exp(-self.tot[cell,:]*s))
-		self.phibar[cell,:] = self.phibar[cell,:]+4*np.pi*self.deltapsi[:]
-		self.psi[:] = self.psi[:]-self.deltapsi[:]
-
-		# for g in range(0, nGrps):
-		# 	# self.deltapsi[g] = (self.psi[g]-self.q[cell,g])*(
-		# 	# 	1-np.exp(-self.tot[cell,g]*s))
-		# 	self.phibar[cell,g] = self.phibar[cell,g]+4*np.pi*self.deltapsi[g]
-		# 	self.psi[g] = self.psi[g]-self.deltapsi[g]
-		# print(self.deltapsi[g])
+		for g in range(0, nGrps):
+			self.deltapsi[g] = (self.psi[g]-self.q[cell,g])*(
+				1-np.exp(-self.tot[cell,g]*s))
+			self.phibar[cell,g] = self.phibar[cell,g]+4*np.pi*self.deltapsi[g]
+			self.psi[g] = self.psi[g]-self.deltapsi[g]

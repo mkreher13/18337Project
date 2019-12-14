@@ -21,7 +21,7 @@ class Geometry():
 
 	def ray_tracing(self, F, max_length, deadzone, d_tot, nGrps, rad):
 
-		#Sample new startig points & angle
+		#Sample new starting points & angle
 		StartX = random.random()*1.26-0.63
 		StartY = random.random()*1.26-0.63
 		theta = random.random()*2*np.pi
@@ -88,32 +88,47 @@ class Geometry():
 				#Hits a right or left boundary
 				theta = -theta+np.pi
 				cell=0
+				if d_tot > deadzone:
+					F.contribute(cell,s,nGrps)
+					self.vol[cell] = self.vol[cell]+s
+					self.s_tot = self.s_tot+s
 			elif d == d3 or d == d4:
 				#Hits a top or bottom boundary
 				theta = -theta
 				cell=0
+				if d_tot > deadzone:
+					F.contribute(cell,s,nGrps)
+					self.vol[cell] = self.vol[cell]+s
+					self.s_tot = self.s_tot+s
 			else:
 				#Distance from the center for the start point of the ray and
 				#distance from the center for the end point of the ray
 				#to determine which cell the segment is in
 				d_center_start = np.sqrt(StartX**2+StartY**2)
 				d_center_end = np.sqrt(EndX**2+EndY**2)
+				a = round(d_center_start,1)
+				b = round(d_center_end,1)
 				#Assume cell is moderator, and correct if 
 				#location is determined to be in fuel
 				cell = 0
 				for i in range(0,len(rad)):
 					if round(d_center_start,3) == rad[i]:
-						if round(d_center_start,1) == round(d_center_end,1):
+						if a == b:
 							cell = i+1
-						elif round(d_center_start,1) < round(d_center_end,1):
+						elif a < b:
 							cell = i
-						elif round(d_center_start,1) > round(d_center_end,1):
+						elif a > b:
 							cell = i+1
-
-			if d_tot > deadzone:
-				F.contribute(cell,s,nGrps)
-				self.s_tot = self.s_tot+s
-				self.vol[cell] = self.vol[cell]+s
+						# if round(d_center_start,1) == round(d_center_end,1):
+						# 	cell = i+1
+						# elif round(d_center_start,1) < round(d_center_end,1):
+						# 	cell = i
+						# elif round(d_center_start,1) > round(d_center_end,1):
+						# 	cell = i+1
+				if d_tot > deadzone:
+					F.contribute(cell,s,nGrps)
+					self.s_tot = self.s_tot+s
+					self.vol[cell] = self.vol[cell]+s
 
 
 			StartX = EndX

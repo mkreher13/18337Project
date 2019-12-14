@@ -74,12 +74,14 @@ while abs(k-NEWk)>1e-5 or m>1e-5:
 	F.oldq = copy.copy(F.q)
 	F.oldphi = copy.copy(F.phibar)
 
+
 	#Output convergence criteria
 	# print('Source:') 
 	# print(F.q)
 	# print('k: %f' % (NEWk))
 
 # print('Number of iterations is %i' % (iteration))
+# print(F.seg_counter)
 metric = (time()-startTime)/(F.seg_counter*nGrps)
 print('Execution metric [time/seg*nGrps] is %.8f microseconds' %(metric*1000000))
 
